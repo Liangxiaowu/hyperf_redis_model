@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Rmodel;
+namespace Rmodel\Model;
 
 
 

@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Rmodel;
+namespace Rmodel;
 
 use Hyperf\Utils\ApplicationContext;
+use phpDocumentor\Reflection\DocBlock\Tags\Param;
+use Rmodel\Model\CommonAttribute;
+use Rmodel\Model\RedisModel;
 
 abstract class Rmodel
 {
-    use RedisModel;
+    use RedisModel, CommonAttribute;
 
     protected $table;
     protected $redis;
@@ -30,6 +33,17 @@ abstract class Rmodel
 
     }
 
+
+    public static function __callStatic($name, $arguments)
+    {
+        switch ($name){
+            case "table":
+                return (new static) ->setTable($arguments);
+            default:
+                return (new static) ->$name($arguments);
+        }
+    }
+
     /**
      * 获取文件key头
      * @return string
@@ -38,6 +52,7 @@ abstract class Rmodel
         if(!empty($this->table)){
             return $this->table;
         }
+
         // 获取当前model名称
         $class = get_class($this);
         $model = end(explode("\\", $class));
@@ -49,5 +64,8 @@ abstract class Rmodel
         return $keyHeader;
 
     }
+
+
+
 
 }
