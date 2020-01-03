@@ -9,6 +9,12 @@ trait RedisModel
 {
 
     private $expire;
+
+    private function rmodelkeys($params){
+        $key = $params[0]?:"*";
+        return $this->redis->keys($key);
+    }
+
     private function rmodelset($params){
         return $this->redis->set($this ->table, $params[0]);
     }
