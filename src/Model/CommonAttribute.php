@@ -7,14 +7,16 @@ namespace Rmodel\Model;
 trait CommonAttribute
 {
     private function setTable($params){
-        $table = $this->table;
-        if($params){
+        if(!empty($params)){
+            $table = $this->table;
+            if($params){
 
-            $p = implode("_", $params);
+                $p = implode("_", $params);
 
-            $table .= "_".$p;
+                $table .= "_".$p;
+            }
+            $this->table = $table;
         }
-        $this->table = $table;
         return $this;
     }
 }

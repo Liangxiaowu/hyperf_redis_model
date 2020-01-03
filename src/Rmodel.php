@@ -16,7 +16,6 @@ abstract class Rmodel
 
     public function __construct(...$params)
     {
-
         $table = $this->header();
         if($params){
 
@@ -28,21 +27,31 @@ abstract class Rmodel
         // key
         $this->table = $table;
 
-        $container = ApplicationContext::getContainer();
-        $this->redis = $container ->get(\Redis::class);
-
-    }
-
-
-    public static function __callStatic($name, $arguments)
-    {
-        switch ($name){
-            case "table":
-                return (new static) ->setTable($arguments);
-            default:
-                return (new static) ->$name($arguments);
+        if(is_null($this->redis)){
+            $container = ApplicationContext::getContainer();
+            $this->redis = $container ->get(\Redis::class);
         }
+
+//        var_dump("入口：".$this->table);
+
     }
+
+    public function __call($method, $arguments)
+    {
+        if($method == "table") return $this ->setTable($arguments);
+
+        $method = "rmodel".$method;
+        return $this->$method($arguments);
+    }
+
+    public static function __callStatic($method, $arguments)
+    {
+        if($method == "table") return (new static) ->setTable($arguments);
+
+        $method = "rmodel".$method;
+        return (new static) ->$method($arguments);
+    }
+
 
     /**
      * 获取文件key头

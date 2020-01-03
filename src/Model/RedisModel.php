@@ -9,30 +9,33 @@ trait RedisModel
 {
 
     private $expire;
-    public function set($value){
-        return $this->redis->set($this ->table, $value);
+    private function rmodelset($params){
+        return $this->redis->set($this ->table, $params[0]);
     }
 
-    public function get(){
+    private function rmodelget(){
         return $this->redis->get($this ->table);
     }
 
-    public function hSet($key){
-        return $this->redis->get($this ->table, $key);
+    private function rmodelhSet($params){
+        return $this->redis->hSet($this ->table, $params[0], $params[1]);
     }
 
-    public function hGet($key){
-        return $this->redis ->hGet($this->table, $key);
+    private function rmodelhGet($params){
+
+        return $this->redis ->hGet($this->table, $params[0]);
     }
 
-    public function expire($tll = 60){
-        $this->expire = $tll;
+    private function rmodelexpire($params){
+
+        $this->expire = $params[0]?:60;
         return $this;
     }
 
     public function __destruct(){
         if(!empty($this->expire)){
             $this->redis ->expire($this->table, $this->expire);
+            $this->expire = 0;
         }
     }
 }
